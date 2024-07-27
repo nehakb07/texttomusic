@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Music</title>
+    <script>
+        function generateMusic() {
+            const prompt = document.getElementById('prompt').value;
+            const duration = document.getElementById('duration').value;
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt, duration: duration })
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                audio.controls = true;
+                document.getElementById('audio').innerHTML = '';
+                document.getElementById('audio').appendChild(audio);
+                audio.play();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Generate Music</h1>
+    <input type="text" id="prompt" placeholder="Enter your prompt here" />
+    <input type="number" id="duration" placeholder="Duration (seconds)" min="1" />
+    <button onclick="generateMusic()">Generate Music</button>
+    <div id="audio"></div>
+</body>
+</html>
